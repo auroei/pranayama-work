@@ -1,2 +1,2 @@
 # pranayama-work
-5 mins guided breath work for workplace stessors
+Guided breath work for workplace stessors
