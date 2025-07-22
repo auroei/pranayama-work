@@ -197,7 +197,7 @@
             ];
 
             // --- STATE ---
-            let selectedExerciseId = null; 
+            let selectedExerciseId = 3; // Default to "Enter flow state"
             let isSessionActive = false;
             let timerInterval = null;
             let animationTimeout = null;
@@ -584,6 +584,8 @@
                 googleCalBtn.addEventListener('click', generateGoogleCalendarLink);
                 outlookCalBtn.addEventListener('click', generateOutlookCalendarLink);
                 icsCalBtn.addEventListener('click', generateIcsFile);
+
+                window.addEventListener('resize', updateConnector);
             }
 
             init();
