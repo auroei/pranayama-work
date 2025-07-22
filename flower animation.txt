@@ -114,15 +114,6 @@
                 return pattern;
             };
 
-            const createForcefulPattern = (cycles) => {
-                const pattern = [];
-                for (let i = 0; i < cycles; i++) {
-                    pattern.push({ instruction: 'Inhale', duration: 0.5, method: 'Nose' });
-                    pattern.push({ instruction: 'Exhale', duration: 0.5, method: 'Nose' });
-                }
-                return pattern;
-            };
-
             const exercises = [
                 {
                     id: 1,
@@ -133,7 +124,10 @@
                     color: '#374151', // bg-gray-700
                     stages: [
                         { name: 'Grounding', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') },
-                        { name: 'Coherent Breathing', duration: 240, pattern: createBreathingPattern(240, 5, 5, 'Nose')},
+                        { name: 'Coherent Breathing', duration: 240, pattern: [
+                            { instruction: 'Inhale', duration: 5, method: 'Nose' },
+                            { instruction: 'Exhale', duration: 5, method: 'Nose' },
+                        ]},
                         { name: 'Observation', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') }
                     ]
                 },
@@ -180,11 +174,11 @@
                     icon: `<span class="text-2xl">⚡️</span>`,
                     color: '#374151', // bg-gray-700
                      stages: [
-                        { name: 'Round 1', duration: 60, pattern: createForcefulPattern(30).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
+                        { name: 'Round 1', duration: 60, pattern: Array(30).fill({ instruction: 'Breathe Forcefully', duration: 1, method: 'Nose' }).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
                         { name: 'Rest', duration: 30, pattern: createBreathingPattern(30, 2, 3, 'Nose') },
-                        { name: 'Round 2', duration: 60, pattern: createForcefulPattern(30).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
+                        { name: 'Round 2', duration: 60, pattern: Array(30).fill({ instruction: 'Breathe Forcefully', duration: 1, method: 'Nose' }).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
                         { name: 'Rest', duration: 30, pattern: createBreathingPattern(30, 2, 3, 'Nose') },
-                        { name: 'Round 3', duration: 60, pattern: createForcefulPattern(30).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
+                        { name: 'Round 3', duration: 60, pattern: Array(30).fill({ instruction: 'Breathe Forcefully', duration: 1, method: 'Nose' }).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
                         { name: 'Observation', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') }
                     ]
                 },
@@ -478,7 +472,16 @@
                 const instructionLower = step.instruction.toLowerCase();
                 holdText.style.display = 'none';
 
-                if (instructionLower.includes('inhale')) {
+                if (instructionLower.includes('breathe forcefully')) {
+                    instructionText.textContent = 'Breathe Forcefully';
+                    circles.forEach(circle => {
+                        circle.style.transitionDuration = `0.5s`;
+                        circle.setAttribute('r', '25');
+                    });
+                    setTimeout(() => {
+                        circles.forEach(circle => circle.setAttribute('r', '15'));
+                    }, 500);
+                } else if (instructionLower.includes('inhale')) {
                     circles.forEach(circle => {
                         circle.style.transitionDuration = `${step.duration}s`;
                         circle.setAttribute('r', '25');
