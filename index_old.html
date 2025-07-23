@@ -44,8 +44,8 @@
             <p class="text-gray-400">Breath work to center yourself</p>
         </div>
         <button id="calendar-btn" class="text-right border border-gray-600 hover:border-gray-500 transition-colors text-white font-semibold py-2 px-4 rounded-lg">
-            <span>Add to calendar</span>
-            <span class="block text-xs text-gray-400 font-normal">without sharing email</span>
+            <span>Schedule with team</span>
+            <span class="block text-center text-xs text-gray-400 font-normal">without sharing email</span>
         </button>
     </header>
 
@@ -87,7 +87,7 @@
                 <label for="reminder-time" class="block text-sm font-medium text-gray-400 mb-2">Reminder Time</label>
                 <input type="time" id="reminder-time" value="10:00" class="bg-gray-700 border border-gray-600 text-white text-center text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
             </div>
-            <p class="text-sm text-gray-400 mb-4">Bro tip: Add your friends in the guest list, 💁‍♂️</p>
+            <p class="text-sm text-gray-400 mb-4">simply add your teammates to the guest list 💁‍♂️</p>
             <div class="space-y-3">
                 <button id="google-cal-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Add to Google Calendar</button>
                 <button id="outlook-cal-btn" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Add to Outlook Calendar</button>
@@ -204,7 +204,7 @@
                         { name: 'Deep Relaxation', duration: 300, pattern: createBreathingPattern(300, 4, 6, 'Mouth')},
                         { name: 'Restful Awareness', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') }
                     ]
-                },
+                }
             ];
 
             // --- STATE ---
@@ -473,7 +473,7 @@
                 const step = stage.pattern[currentPatternIndex % stage.pattern.length];
                 
                 instructionText.textContent = step.instruction;
-                methodText.textContent = step.method;
+                methodText.textContent = step.method ? `through ${step.method}` : '';
                 
                 const instructionLower = step.instruction.toLowerCase();
                 holdText.style.display = 'none';
@@ -520,15 +520,23 @@
                 const [hours, minutes] = time.split(':');
                 
                 const now = new Date();
-                const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+                // Set the event for the next occurrence of the specified time
+                const startDate = new Date();
+                startDate.setHours(hours, minutes, 0, 0);
+                if (startDate < now) {
+                    startDate.setDate(startDate.getDate() + 1);
+                }
+
                 const endDate = new Date(startDate.getTime() + 10 * 60000); // 10 minutes duration
 
                 const toUTC = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
 
+                const description = `Take 10 minutes to reset and recharge\n\n1) Join the session here: https://pranayama.work\n2) Follow the guided breathing exercise.\n3) Return to your work feeling calmer and more focused.\n\nFeel free to forward this invite to anyone on the team who might benefit!`;
+
                 return {
-                    title: 'Breath work',
-                    description: 'Center yourself at pranayama.work',
-                    location: 'www.pranayama.work',
+                    title: '10 min breath work',
+                    description: description,
+                    location: 'https://pranayama.work',
                     startDate,
                     endDate,
                     toUTC
@@ -557,22 +565,34 @@
                 outlookUrl.searchParams.append('startdt', details.startDate.toISOString());
                 outlookUrl.searchParams.append('enddt', details.endDate.toISOString());
                 outlookUrl.searchParams.append('body', details.description);
-                outlookUrl.searchParams.append('location', details.location);
+                outlookUrl.search_params.append('location', details.location);
                 window.open(outlookUrl.toString(), '_blank');
                 hideModal();
             }
 
             function generateIcsFile() {
                 const details = getEventDetails();
+                const toICSFormat = (date) => {
+                    return date.getUTCFullYear() +
+                        String(date.getUTCMonth() + 1).padStart(2, '0') +
+                        String(date.getUTCDate()).padStart(2, '0') + 'T' +
+                        String(date.getUTCHours()).padStart(2, '0') +
+                        String(date.getUTCMinutes()).padStart(2, '0') +
+                        String(date.getUTCSeconds()).padStart(2, '0') + 'Z';
+                }
+
                 const icsContent = [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
+                    'PRODID:-//pranayama.work//EN',
                     'BEGIN:VEVENT',
-                    `DTSTART:${details.toUTC(details.startDate)}`,
-                    `DTEND:${details.toUTC(endDate)}`,
+                    'UID:' + Date.now() + '@pranayama.work',
+                    'DTSTAMP:' + toICSFormat(new Date()),
+                    `DTSTART:${toICSFormat(details.startDate)}`,
+                    `DTEND:${toICSFormat(details.endDate)}`,
                     'RRULE:FREQ=DAILY',
                     'SUMMARY:' + details.title,
-                    'DESCRIPTION:' + details.description,
+                    'DESCRIPTION:' + details.description.replace(/\n/g, '\\n'), // Properly escape newlines for ICS
                     'LOCATION:' + details.location,
                     'END:VEVENT',
                     'END:VCALENDAR'

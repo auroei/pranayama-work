@@ -44,8 +44,8 @@
             <p class="text-gray-400">Breath work to center yourself</p>
         </div>
         <button id="calendar-btn" class="text-right border border-gray-600 hover:border-gray-500 transition-colors text-white font-semibold py-2 px-4 rounded-lg">
-            <span>Schedule with team</span>
-            <span class="block text-center text-xs text-gray-400 font-normal">without sharing email</span>
+            <span>Add to calendar</span>
+            <span class="block text-xs text-gray-400 font-normal">without sharing email</span>
         </button>
     </header>
 
@@ -87,7 +87,7 @@
                 <label for="reminder-time" class="block text-sm font-medium text-gray-400 mb-2">Reminder Time</label>
                 <input type="time" id="reminder-time" value="10:00" class="bg-gray-700 border border-gray-600 text-white text-center text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
             </div>
-            <p class="text-sm text-gray-400 mb-4">simply add your teammates to the guest list 💁‍♂️</p>
+            <p class="text-sm text-gray-400 mb-4">Bro tip: Add your friends in the guest list, 💁‍♂️</p>
             <div class="space-y-3">
                 <button id="google-cal-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Add to Google Calendar</button>
                 <button id="outlook-cal-btn" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Add to Outlook Calendar</button>
@@ -126,25 +126,6 @@
             const exercises = [
                 {
                     id: 1,
-                    title: 'Insta Reset',
-                    description: `Physiological sighs to rapidly reduce stress.`,
-                    duration: 120, // 2 minutes
-                    icon: `<span class="text-2xl">🧘‍♀️</span>`,
-                    color: '#374151', // bg-gray-700
-                    stages: [
-                        { 
-                            name: 'Cyclic Sighing', 
-                            duration: 120, 
-                            pattern: [
-                                { instruction: 'Inhale', duration: 1.5, method: 'Nose' },
-                                { instruction: 'Inhale Again', duration: 0.5, method: 'Nose' },
-                                { instruction: 'Long Exhale', duration: 4, method: 'Mouth' },
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 2,
                     title: 'Start my day',
                     description: `Coherent breathing for balance.`,
                     duration: 360, // 6 minutes
@@ -157,7 +138,7 @@
                     ]
                 },
                 {
-                    id: 3,
+                    id: 2,
                     title: 'Recover from meetings',
                     description: `Uses Box Breathing to reset and calm.`,
                     duration: 300, // 5 minutes
@@ -175,7 +156,7 @@
                     ]
                 },
                 {
-                    id: 4,
+                    id: 3,
                     title: 'Enter flow state',
                     description: `Uses 4-7-8 Breath to quiet the mind.`,
                     duration: 420, // 7 minutes
@@ -192,7 +173,7 @@
                     ]
                 },
                 {
-                    id: 5,
+                    id: 4,
                     title: 'Beat drowsiness',
                     description: `Uses Bhastrika to energize and awaken.`,
                     duration: 300, // 5 minutes
@@ -206,11 +187,28 @@
                         { name: 'Round 3', duration: 60, pattern: createForcefulPattern(30).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
                         { name: 'Observation', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') }
                     ]
-                }
+                },
+                {
+                    id: 5,
+                    title: 'Decompress after long day',
+                    description: `Uses Cyclic Sighing to release stress.`,
+                    duration: 480, // 8 minutes
+                    icon: `<span class="text-2xl">😌</span>`,
+                    color: '#374151', // bg-gray-700
+                    stages: [
+                        { name: 'Cyclic Sighing', duration: 120, pattern: [
+                            { instruction: 'Inhale', duration: 1.5, method: 'Nose' },
+                            { instruction: 'Inhale Again', duration: 0.5, method: 'Nose' },
+                            { instruction: 'Long Exhale', duration: 4, method: 'Mouth' },
+                        ]},
+                        { name: 'Deep Relaxation', duration: 300, pattern: createBreathingPattern(300, 4, 6, 'Mouth')},
+                        { name: 'Restful Awareness', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') }
+                    ]
+                },
             ];
 
             // --- STATE ---
-            let selectedExerciseId = 1; // Default to "Insta Reset"
+            let selectedExerciseId = 3; // Default to "Enter flow state"
             let isSessionActive = false;
             let timerInterval = null;
             let animationTimeout = null;
@@ -241,7 +239,7 @@
                     
                     itemEl.innerHTML = `
                         <div class="mr-4 w-12 flex-shrink-0 flex flex-col items-center">
-                            <div class="text-4xl font-bold text-white">${Math.floor(exercise.duration / 60)}</div>
+                            <div class="text-4xl font-bold text-white">${Math.round(exercise.duration / 60)}</div>
                             <div class="text-sm text-gray-400">mins</div>
                         </div>
                         <div class="flex-grow">
@@ -475,7 +473,7 @@
                 const step = stage.pattern[currentPatternIndex % stage.pattern.length];
                 
                 instructionText.textContent = step.instruction;
-                methodText.textContent = step.method ? `through ${step.method}` : '';
+                methodText.textContent = step.method;
                 
                 const instructionLower = step.instruction.toLowerCase();
                 holdText.style.display = 'none';
@@ -522,23 +520,15 @@
                 const [hours, minutes] = time.split(':');
                 
                 const now = new Date();
-                // Set the event for the next occurrence of the specified time
-                const startDate = new Date();
-                startDate.setHours(hours, minutes, 0, 0);
-                if (startDate < now) {
-                    startDate.setDate(startDate.getDate() + 1);
-                }
-
+                const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
                 const endDate = new Date(startDate.getTime() + 10 * 60000); // 10 minutes duration
 
                 const toUTC = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
 
-                const description = `Take 10 minutes to reset and recharge\n\n1) Join the session here: https://pranayama.work\n2) Follow the guided breathing exercise.\n3) Return to your work feeling calmer and more focused.\n\nFeel free to forward this invite to anyone on the team who might benefit!`;
-
                 return {
-                    title: '10 min breath work',
-                    description: description,
-                    location: 'https://pranayama.work',
+                    title: 'Breath work',
+                    description: 'Center yourself at pranayama.work',
+                    location: 'www.pranayama.work',
                     startDate,
                     endDate,
                     toUTC
@@ -574,27 +564,15 @@
 
             function generateIcsFile() {
                 const details = getEventDetails();
-                const toICSFormat = (date) => {
-                    return date.getUTCFullYear() +
-                        String(date.getUTCMonth() + 1).padStart(2, '0') +
-                        String(date.getUTCDate()).padStart(2, '0') + 'T' +
-                        String(date.getUTCHours()).padStart(2, '0') +
-                        String(date.getUTCMinutes()).padStart(2, '0') +
-                        String(date.getUTCSeconds()).padStart(2, '0') + 'Z';
-                }
-
                 const icsContent = [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
-                    'PRODID:-//pranayama.work//EN',
                     'BEGIN:VEVENT',
-                    'UID:' + Date.now() + '@pranayama.work',
-                    'DTSTAMP:' + toICSFormat(new Date()),
-                    `DTSTART:${toICSFormat(details.startDate)}`,
-                    `DTEND:${toICSFormat(details.endDate)}`,
+                    `DTSTART:${details.toUTC(details.startDate)}`,
+                    `DTEND:${details.toUTC(endDate)}`,
                     'RRULE:FREQ=DAILY',
                     'SUMMARY:' + details.title,
-                    'DESCRIPTION:' + details.description.replace(/\n/g, '\\n'), // Properly escape newlines for ICS
+                    'DESCRIPTION:' + details.description,
                     'LOCATION:' + details.location,
                     'END:VEVENT',
                     'END:VCALENDAR'
