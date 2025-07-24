@@ -126,6 +126,25 @@
             const exercises = [
                 {
                     id: 1,
+                    title: 'Insta Reset',
+                    description: `Physiological sighs to rapidly reduce stress.`,
+                    duration: 120, // 2 minutes
+                    icon: `<span class="text-2xl">🧘‍♀️</span>`,
+                    color: '#374151', // bg-gray-700
+                    stages: [
+                        { 
+                            name: 'Cyclic Sighing', 
+                            duration: 120, 
+                            pattern: [
+                                { instruction: 'Inhale', duration: 1.5, method: 'Nose' },
+                                { instruction: 'Inhale Again', duration: 0.5, method: 'Nose' },
+                                { instruction: 'Long Exhale', duration: 4, method: 'Mouth' },
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 2,
                     title: 'Start my day',
                     description: `Coherent breathing for balance.`,
                     duration: 360, // 6 minutes
@@ -138,7 +157,7 @@
                     ]
                 },
                 {
-                    id: 2,
+                    id: 3,
                     title: 'Recover from meetings',
                     description: `Uses Box Breathing to reset and calm.`,
                     duration: 300, // 5 minutes
@@ -156,7 +175,7 @@
                     ]
                 },
                 {
-                    id: 3,
+                    id: 4,
                     title: 'Enter flow state',
                     description: `Uses 4-7-8 Breath to quiet the mind.`,
                     duration: 420, // 7 minutes
@@ -173,7 +192,7 @@
                     ]
                 },
                 {
-                    id: 4,
+                    id: 5,
                     title: 'Beat drowsiness',
                     description: `Uses Bhastrika to energize and awaken.`,
                     duration: 300, // 5 minutes
@@ -187,28 +206,11 @@
                         { name: 'Round 3', duration: 60, pattern: createForcefulPattern(30).concat([{ instruction: 'Deep Inhale', duration: 2, method: 'Nose' }, { instruction: 'Hold', duration: 28, method: '' }]) },
                         { name: 'Observation', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') }
                     ]
-                },
-                {
-                    id: 5,
-                    title: 'Decompress after long day',
-                    description: `Uses Cyclic Sighing to release stress.`,
-                    duration: 480, // 8 minutes
-                    icon: `<span class="text-2xl">😌</span>`,
-                    color: '#374151', // bg-gray-700
-                    stages: [
-                        { name: 'Cyclic Sighing', duration: 120, pattern: [
-                            { instruction: 'Inhale', duration: 1.5, method: 'Nose' },
-                            { instruction: 'Inhale Again', duration: 0.5, method: 'Nose' },
-                            { instruction: 'Long Exhale', duration: 4, method: 'Mouth' },
-                        ]},
-                        { name: 'Deep Relaxation', duration: 300, pattern: createBreathingPattern(300, 4, 6, 'Mouth')},
-                        { name: 'Restful Awareness', duration: 60, pattern: createBreathingPattern(60, 2, 3, 'Nose') }
-                    ]
                 }
             ];
 
             // --- STATE ---
-            let selectedExerciseId = 3; // Default to "Enter flow state"
+            let selectedExerciseId = 1; // Default to "Insta Reset"
             let isSessionActive = false;
             let timerInterval = null;
             let animationTimeout = null;
@@ -239,7 +241,7 @@
                     
                     itemEl.innerHTML = `
                         <div class="mr-4 w-12 flex-shrink-0 flex flex-col items-center">
-                            <div class="text-4xl font-bold text-white">${Math.round(exercise.duration / 60)}</div>
+                            <div class="text-4xl font-bold text-white">${Math.floor(exercise.duration / 60)}</div>
                             <div class="text-sm text-gray-400">mins</div>
                         </div>
                         <div class="flex-grow">
@@ -565,7 +567,7 @@
                 outlookUrl.searchParams.append('startdt', details.startDate.toISOString());
                 outlookUrl.searchParams.append('enddt', details.endDate.toISOString());
                 outlookUrl.searchParams.append('body', details.description);
-                outlookUrl.search_params.append('location', details.location);
+                outlookUrl.searchParams.append('location', details.location);
                 window.open(outlookUrl.toString(), '_blank');
                 hideModal();
             }

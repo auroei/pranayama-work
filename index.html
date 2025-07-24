@@ -41,7 +41,7 @@
     <header class="mb-6 flex-shrink-0 flex justify-between items-start">
         <div>
             <h1 class="text-2xl sm:text-3xl text-white">Pranayama @ work</h1>
-            <p class="text-gray-400">Breath work to center yourself</p>
+            <p class="text-gray-400">Breathwork, to center yourself</p>
         </div>
         <button id="calendar-btn" class="text-right border border-gray-600 hover:border-gray-500 transition-colors text-white font-semibold py-2 px-4 rounded-lg">
             <span>Schedule with team</span>
@@ -565,7 +565,7 @@
                 outlookUrl.searchParams.append('rru', 'addevent');
                 outlookUrl.searchParams.append('subject', details.title);
                 outlookUrl.searchParams.append('startdt', details.startDate.toISOString());
-                outlookUrl.searchParams.append('enddt', details.endDate.toISOString());
+                outlookUrl.search_params.append('enddt', details.endDate.toISOString());
                 outlookUrl.searchParams.append('body', details.description);
                 outlookUrl.searchParams.append('location', details.location);
                 window.open(outlookUrl.toString(), '_blank');
